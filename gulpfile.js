@@ -24,6 +24,7 @@ var config = {
   cssout: 'dist/css/',
   jsout: 'dist/js/',
   imgout: 'dist/img/',
+  fonts: 'dist/fonts',
   htmlout: 'dist/',
   scssout: 'src/css/',
   cssoutname: 'style.css',
@@ -33,14 +34,13 @@ var config = {
 };
 
 gulp.task('reload', function() {
-  browserSync.reload();
+  gulp.src(config.fonts)
 });
 
 gulp.task('serve', ['sass'], function() {
   browserSync({
     server: config.src
-  });
-
+});
   gulp.watch([config.htmlin, config.jsin], ['reload']);
   gulp.watch(config.scssin, ['sass']);
 });
@@ -75,7 +75,7 @@ gulp.task('img', function() {
   return gulp.src(config.imgin)
     .pipe(changed(config.imgout))
     .pipe(imagemin())
-    .pipe(gulp.dest(config.imgout));
+    .pipe(gulp.dest(config.imgout))
 });
 
 gulp.task('html', function() {
@@ -92,12 +92,17 @@ gulp.task('html', function() {
     .pipe(gulp.dest(config.dist))
 });
 
-gulp.task('clean', function() {
+gulp.task('fonts', function() {
+  return gulp.src("src/fonts/*") 
+    .pipe(gulp.dest(config.fonts));
+});
+
+gulp.task('clean', function() { 
   return del([config.dist]);
 });
 
 gulp.task('build', function() {
-  sequence('clean', ['html', 'js', 'css', 'img']);
+  sequence('clean', ['html', 'js', 'css', 'img', 'fonts']);
 });
 
 gulp.task('default', ['serve']);
